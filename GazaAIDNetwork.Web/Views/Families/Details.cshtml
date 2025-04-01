@@ -1,0 +1,399 @@
+﻿@model GazaAIDNetwork.Core.Dtos.FamilyDto
+
+@using GazaAIDNetwork.EF.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using static GazaAIDNetwork.Core.Enums.Enums
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@{
+    var user = await UserManager.GetUserAsync(User);
+    if (user != null)
+    {
+        user = await UserManager.Users
+        .Include(u => u.Division)
+        .FirstOrDefaultAsync(u => u.Id == user.Id);
+    }
+    else
+        user = new User();
+    var roles = (user == null) ?new List<string>() : (await UserManager.GetRolesAsync(user)).ToList();
+}
+<section class="tab-components">
+    <div class="container-fluid">
+        <!-- ========== title-wrapper start ========== -->
+        <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="title">
+                        <h2>تفاصيل الطلب</h2>
+                    </div>
+                </div>
+                <!-- end col -->
+                <div class="col-md-6">
+                    <div class="breadcrumb-wrapper">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a asp-controller="Families" asp-action="Index">لوحة التحكم /</a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    تفاصيل طلب الإغاثة
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                <!-- end col -->
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- ========== title-wrapper end ========== -->
+        <!-- ========== form-elements-wrapper start ========== -->
+        <div class="form-elements-wrapper">
+            <form asp-action="Edit" asp-controller="Families" enctype="multipart/form-data">
+                <input asp-for="Id" hidden type="text"  />
+                @if (!roles.Contains(Role.admin.ToString()) && !roles.Contains(Role.superadmin.ToString())) // Show input for everyone except admin
+                {
+                    <input asp-for="RepresentativeId" hidden type="text" />
+                }
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <!-- input style start -->
+                        <div class="card-style mb-30">
+                            <h6 class="mb-25">بيانات الزوج</h6>
+                            <div style="margin-bottom: 0px" class="input-style-3">
+                                <input asp-for="HusbandName" readonly type="text" placeholder="الاسم بالكامل" />
+                                <span class="icon"><i class="lni lni-user"></i></span>
+                                <span asp-validation-for="HusbandName" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: 0px" class="input-style-3">
+                                <input asp-for="IdNumber" type="text" readonly placeholder="رقم الهوية" />
+                                <span class="icon"><i class="lni lni-postcard"></i></span>
+                                <span asp-validation-for="IdNumber" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: 0px" class="input-style-3">
+                                <input asp-for="PhoneNumber" readonly type="text" placeholder="رقم الهاتف" />
+                                <span class="icon"><i class="lni lni-phone"></i></span>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: 0px" class="input-style-3">
+                                <input asp-for="NumberMembers" readonly type="number" placeholder="عدد الأفراد" />
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="NumberMembers" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>الجنس</label>
+                                <div class="select-position">
+                                    <select disabled asp-for="GenderForHusband">
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">ذكر</option>
+                                        <option value="1">أنثى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>حالة رب الأسرة</label>
+                                <div class="select-position">
+                                    <select asp-for="HusbandStatus" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">على قيد الحياة</option>
+                                        <option value="1">متوفى</option>
+                                        <option value="2">شهيد</option>
+                                        <option value="3">أسير</option>
+                                        <option value="4">مفقود</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                            <div class="input-style-1">
+                                <label>تاريخ تغير حالة رب الأسرة</label>
+                                <input asp-for="DateChangeStatusForHusband" disabled type="date" />
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>الحالة الإجتماعية للأسرة</label>
+                                <div class="select-position">
+                                    <select asp-for="MaritalStatus" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">متزوج</option>
+                                        <option value="1">أرمل/ة</option>
+                                        <option value="2">مطلقة</option>
+                                        <option value="3">غير متزوجة</option>
+                                        <option value="4">زوجة ثانية</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                        </div>
+                        <!-- end card -->
+                        <!-- ======= input style end ======= -->
+                        <!-- input style start -->
+                        <div id="wifeCard" class="card-style mb-30">
+                            <h6 class="mb-25">بيانات الزوجة</h6>
+                            <div style="margin-bottom: 0px" class="input-style-3">
+                                <input asp-for="WifeName" type="text" placeholder="الاسم بالكامل" disabled />
+                                <span class="icon"><i class="lni lni-user"></i></span>
+                                <span asp-validation-for="WifeName" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: 0px" class="input-style-3">
+                                <input asp-for="WifeIdNumber" type="text" placeholder="رقم الهوية" disabled />
+                                <span class="icon"><i class="lni lni-postcard"></i></span>
+                                <span asp-validation-for="WifeIdNumber" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>الجنس</label>
+                                <div class="select-position">
+                                    <select asp-for="GenderForWife" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">ذكر</option>
+                                        <option value="1">أنثى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>حالة الزوجة</label>
+                                <div class="select-position">
+                                    <select asp-for="WifeStatus" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">على قيد الحياة</option>
+                                        <option value="1">متوفى</option>
+                                        <option value="2">شهيد</option>
+                                        <option value="3">أسير</option>
+                                        <option value="4">مفقود</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                            <div class="input-style-1">
+                                <label>تاريخ تغير حالة الزوجة</label>
+                                <input asp-for="DateChangeStatusForWife" type="date" disabled />
+                            </div>
+                            <!-- end input -->
+                        </div>
+                        <!-- end card -->
+                        <!-- ======= input style end ======= -->
+                        <!-- ======= input switch style start ======= -->
+                        <!-- input style start -->
+                        <div class="card-style mb-30">
+                            <h6 class="mb-25">بيانات السكن الأصلي</h6>
+
+                            <div class="select-style-1">
+                                <label>المحافظة</label>
+                                <div class="select-position">
+                                    <select asp-for="OriginalGovernotate" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">خانيونس</option>
+                                        <option value="1">أخرى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>المدينة</label>
+                                <div class="select-position">
+                                    <select asp-for="OriginaCity"disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">القرارة</option>
+                                        <option value="1">أخرى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>الحي</label>
+                                <div class="select-position">
+                                    <select asp-for="OriginaNeighborhood" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">المنطقة الغربية</option>
+                                        <option value="1">المنطقة الوسطى</option>
+                                        <option value="2">المنطقة الشرقية</option>
+                                        <option value="3">المنطقة الشمالية</option>
+                                        <option value="4">المنطقة الجنوبية</option>
+                                        <option value="5">أخرى</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <!-- ======= input style end ======= -->
+                        <!-- ======= input switch style start ======= -->
+                        <!-- input style start -->
+                        <div class="card-style mb-30">
+                            <div class="select-style-1">
+                                <label>الوضع المادي</label>
+                                <div class="select-position">
+                                    <select id="FinancialSituation" >
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">غير محدد</option>
+                                        <option value="1">منخفض</option>
+                                        <option value="2">منخفض جدا</option>
+                                        <option value="3">متوسط</option>
+                                        <option value="4">مرتفع</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        
+                        <div class="card-style mb-30">
+                            <div class="form-check form-switch toggle-switch mb-30">
+                                <input class="form-check-input" type="checkbox" asp-for="IsDisplaced" disabled />
+                                <label class="form-check-label" for="IsDisplaced">هل أنت نازح ؟ نعم /لا </label>
+                            </div>
+                            <div class="form-check form-switch toggle-switch mb-30">
+                                <input class="form-check-input" type="checkbox" asp-for="IsDisability" disabled />
+                                <label class="form-check-label" for="IsDisability">هل لديك (أو أحد أفراد أسرتك) أية إعاقة ؟ نعم /لا </label>
+                            </div>
+                            <div class="form-check form-switch toggle-switch mb-30">
+                                <input class="form-check-input" type="checkbox" asp-for="IsDisease"disabled />
+                                <label class="form-check-label" for="IsDisease">هل لديك (أو أحد أفراد أسرتك) أية أمراض مزمنة ؟ نعم /لا </label>
+                            </div>
+
+                        </div>
+                        <!-- ======= input switch style end ======= -->
+                        <!-- input style start -->
+                        <div id="dispaceCard" class="card-style mb-30">
+                            <h6 class="mb-25">بيانات النزوح</h6>
+
+                            <div class="select-style-1">
+                                <label>المحافظة</label>
+                                <div class="select-position">
+                                    <select asp-for="CurrentGovernotate" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">خانيونس</option>
+                                        <option value="1">أخرى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>المدينة</label>
+                                <div class="select-position">
+                                    <select asp-for="CurrentCity" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">القرارة</option>
+                                        <option value="1">أخرى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+                            <div class="select-style-1">
+                                <label>الحي</label>
+                                <div class="select-position">
+                                    <select asp-for="CurrentNeighborhood" disabled>
+                                        <option value="">اختر قيمة ...</option>
+                                        <option value="0">المنطقة الغربية</option>
+                                        <option value="1">المنطقة الوسطى</option>
+                                        <option value="2">المنطقة الشرقية</option>
+                                        <option value="3">المنطقة الشمالية</option>
+                                        <option value="4">المنطقة الجنوبية</option>
+                                        <option value="5">أخرى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- end input -->
+
+                        </div>
+                        <!-- end card -->
+                        <!-- ======= input style end ======= -->
+                        <!-- input style start -->
+                        <div id="disabilityCard" class="card-style mb-30">
+                            <h6 class="mb-25">بيانات الإعاقة "أدخل عدد المصابين بكل نوع"</h6>
+                            <div style="margin-bottom: -16px" class="input-style-3">
+                                <label>الإعاقة الذهنية</label>
+                                <input min="0" max="20" asp-for="Mental" type="number" placeholder="الإعاقة الذهنية" disabled />
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="Mental" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: -16px" class="input-style-3">
+                                <label>الإعاقة الحركية</label>
+                                <input min="0" max="20" asp-for="Motor" type="number" placeholder="الإعاقة الحركية"disabled />
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="Motor" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: -16px" class="input-style-3">
+                                <label>الإعاقة السمعية</label>
+                                <input min="0" max="20" asp-for="Hearing" type="number" placeholder="الإعاقة السمعية" disabled/>
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="Hearing" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: -16px" class="input-style-3">
+                                <label>الإعاقة البصرية</label>
+                                <input min="0" max="20" asp-for="Visual" type="number" placeholder="الإعاقة البصرية" disabled />
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="Visual" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                        </div>
+                        <!-- end card -->
+                        <!-- ======= input style end ======= -->
+                        <!-- input style start -->
+                        <div id="diseaseCard" class="card-style mb-30">
+                            <h6 class="mb-25">بيانات المرض "أدخل عدد المصابين بكل نوع"</h6>
+                            <div style="margin-bottom: -16px" class="input-style-3">
+                                <label>السكري</label>
+                                <input min="0" max="20" asp-for="Diabetes" type="number" disabled placeholder="السكري" />
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="Diabetes" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: -16px" class="input-style-3">
+                                <label>ضغط الدم</label>
+                                <input min="0" max="20" asp-for="BloodPressure" type="number" disabled placeholder="ضغط الدم" />
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="BloodPressure" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: -16px" class="input-style-3">
+                                <label>السرطان</label>
+                                <input min="0" max="20" asp-for="Cancer" type="number" disabled placeholder="السرطان" />
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="Cancer" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                            <div style="margin-bottom: -16px" class="input-style-3">
+                                <label>الفشل الكلوي</label>
+                                <input min="0" max="20" asp-for="KidneyFailure" type="number" disabled placeholder="الفشل الكلوي" />
+                                <span class="icon"><i class="lni lni-users"></i></span>
+                                <span asp-validation-for="KidneyFailure" class="text-danger"></span>
+                            </div>
+                            <!-- end input -->
+                        </div>
+                        <!-- end card -->
+                        <!-- ======= input style end ======= -->
+                    </div>
+                </div>
+                <div class="align-center menu-toggle-btn mr-15">
+                    <div class="card-style mb-30">
+                        <div class="form-check form-switch toggle-switch mb-30">
+                            <label class="form-check-label" for="IsPledge">أقر وأتعهد أنا المواطن <strong>@Model.HusbandName</strong>   بأن جميع البيانات التي قمت بإدخالها صحيحة وخالية من التزوير , وأتحمل كامل المسؤولية القانونية عن ذلك </label>
+                            <input class="form-check-input" disabled type="checkbox" asp-for="IsPledge" />
+                        </div>
+                    </div>
+                    <a onclick="Accept('@Model.Id')" style="padding:15px ; margin-bottom:1%" class="main-btn success-btn-outline rounded-full btn-hover">
+                         الموافقة
+                    </a>
+                    <a onclick="Reject('@Model.Id')" style="padding:15px ; margin-bottom:1%" class="main-btn danger-btn-outline rounded-full btn-hover">
+                         الرفض
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script src="~/js/family/statusfamily.js"></script>
+}

@@ -1,0 +1,98 @@
+﻿@using GazaAIDNetwork.EF.Models
+@using Microsoft.AspNetCore.Identity
+@using static GazaAIDNetwork.Core.Enums.Enums
+<link href="~/lib/datatables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+<link href="~/css/excel.css" rel="stylesheet" />
+
+<!-- FontAwesome (For icons) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<!-- Tempus Dominus Bootstrap 4 Datetimepicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+@inject UserManager<User> Usermanager
+@{
+    var user = await Usermanager.GetUserAsync(User);
+    var roles = (await Usermanager.GetRolesAsync(user)).ToList();
+    var projectAidTemp = new ProjectAid();
+}
+<input id="cycleId" hidden value="@TempData["cycleId"]"/>
+<div style="margin-top:1% ; padding:0px" class="container-fluid">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0px 10px; height:50px" class="menu-toggle-btn mr-15">
+
+
+        <partial name="AddProjectAid.cshtml" model="projectAidTemp" />
+
+
+        @if (roles.Contains(Role.admin.ToString()))
+        {
+            <a style="padding:5px " class="main-btn success-btn-outline rounded-full btn-hover" data-bs-toggle="modal" data-bs-target="#AddProjectAidModal">
+                <i class="bi bi-plus-circle"></i> إضافة مشروع جديد
+            </a>
+        }
+        @if (roles.Contains(Role.superadmin.ToString()))
+        {
+            <div class="select-style-1">
+                <label>المنطقة</label>
+                <div class="select-position">
+                    <select id="divisionId">
+                        <option value="">جميع المناطق</option>
+                    </select>
+                </div>
+            </div>
+            <!-- end input -->
+        }
+    </div>
+    <div style="margin:1% ; padding:0px" class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10">المشاريع الإغاثية</h6>
+                    <div class="table-wrapper table-responsive" style="width:100%; margin:0 auto;">
+                        <table id="ProjectsAid" class="table " width="100%" cellspacing="0">
+                            <thead>
+                                <tr style="background-color:#cfeaa2">
+                                    <th></th>
+                                    <th>#</th>
+                                    <th>
+                                        <div class="check-input-primary">
+                                            <input class="form-check-input" type="checkbox" id="checkbox-1" />
+                                        </div>
+                                    </th>
+                                    <th >اسم المشروع</th>
+                                    <th>وصف المشروع</th>
+                                    <th>ملاحظات</th>
+                                    <th>تاريخ البدء</th>
+                                    <th>تاريخ الانتهاء</th>
+                                    <th>الكمية </th>
+                                    <th>الحالة</th>
+                                    <th>المناديب المستهدفين</th>
+                                    <th>عدد العائلات المستفيدة</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/projectaid/projectsaiddatatable.js"></script>
+    <script src="~/js/projectaid/addprojectaid.js"></script>
+    <script src="~/js/projectaid/deleteprojectaid.js"></script>
+    <script src="~/js/projectaid/excelfile.js"></script>
+    <script src="~/js/projectaid/start.js"></script>
+    <!-- jQuery (required) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap Datetimepicker (if using Bootstrap 4 or 5) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" />
+}

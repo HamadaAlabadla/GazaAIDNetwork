@@ -1,0 +1,244 @@
+﻿@using GazaAIDNetwork.EF.Models
+@using Microsoft.AspNetCore.Identity
+@using static GazaAIDNetwork.Core.Enums.Enums
+<link href="~/lib/datatables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+<link href="~/css/excel.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+@inject UserManager<User> Usermanager
+@{
+    var user = await Usermanager.GetUserAsync(User);
+    var roles = (await Usermanager.GetRolesAsync(user)).ToList();
+}
+
+<div style="margin-top:1% ; padding:0px" class="container-fluid">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0px 10px; height:50px" class="menu-toggle-btn mr-15">
+        <div style="padding:5px " class="dropdown">
+            <button style="padding:5px ; margin-bottom:1%" class="main-btn success-btn-outline rounded-full btn-hover dropdown-toggle"
+                    type="button"
+                    id="multiSelectDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                حدد الأعمدة
+            </button>
+            <ul class="dropdown-menu"
+                aria-labelledby="multiSelectDropdown">
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" checked type="checkbox"
+                                   value="1">
+                            الاسم
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" checked type="checkbox"
+                                   value="2">
+                            رقم الهوية
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" checked type="checkbox"
+                                   value="3">
+                            رقم الهاتف
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" checked type="checkbox"
+                                   value="4">
+                            عدد الأفراد
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="5">
+                            حالة رب الأسرة
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="6">
+                            تاريخ تغير حالة رب الأسرة
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="7">
+                            جنس رب الأسرة
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="8">
+                            اسم الزوج/ة
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="9">
+                            رقم هوية الزوج/ة
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="10">
+                            حالة الزوج/ة
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="11">
+                            تاريخ تغير حالة الزوج/ة
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="12">
+                            جنس الزوج/ة
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" checked type="checkbox"
+                                   value="13">
+                            الحالة الإجتماعية
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="14">
+                            الحالة المادية
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"
+                                   value="15">
+                            اسم المندوب
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div style="margin-bottom:-8px" class="form-check form-switch toggle-switch mb-30">
+                        <label class="form-check-label">
+                            <input class="form-check-input" checked type="checkbox"
+                                   value="19">
+                            حالة طلب الإغاثة
+                        </label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- end input -->
+        @if (roles.Contains(Role.superadmin.ToString()))
+        {
+            <div class="select-style-1">
+                <label>المنطقة</label>
+                <div class="select-position">
+                    <select id="divisionId">
+                        <option value="">جميع المناطق</option>
+                    </select>
+                </div>
+            </div>
+            <!-- end input -->
+        }
+        <div class="select-style-1">
+            <label>المندوب</label>
+            <div class="select-position">
+                <select id="representativeId">
+                    <option value="">جميع المناديب</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div style="margin:1% ; padding:0px" class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10">بيانات العائلات المحذوفة</h6>
+                    <p class="text-sm mb-20">
+                        تشمل جميع العائلات التي تم حذفها
+                    </p>
+                    <div class="table-wrapper table-responsive" style="width:100%; margin:0 auto;">
+                        <table id="families" class="table " width="100%" cellspacing="0">
+                            <thead>
+                                <tr style="background-color:#cfeaa2">
+                                    <th></th>
+                                    <th>#</th>
+                                    <th>
+                                        <div class="check-input-primary">
+                                            <input class="form-check-input" type="checkbox" id="selectAll" />
+                                        </div>
+                                    </th>
+                                    <th style="min-width: 200px;">الاسم</th>
+                                    <th>رقم الهوية</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>عدد الأفراد</th>
+                                    <th>حالة رب الأسرة</th>
+                                    <th>تاريخ تغير حالة رب الأسرة </th>
+                                    <th>جنس رب الأسرة </th>
+                                    <th style="min-width: 200px;">اسم الزوج/ة</th>
+                                    <th>رقم هوية الزوج/ة</th>
+                                    <th>حالة الزوج/ة</th>
+                                    <th>تاريخ تغير حالة الزوج/ة</th>
+                                    <th>جنس الزوج/ة</th>
+                                    <th>الحالة الإجتماعية</th>
+                                    <th>الحالة المادية</th>
+                                    <th>اسم المندوب</th>
+                                    <th>حالة طلب الإغاثة</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/family/deletedfamiliesdatatable.js"></script>
+    <script src="~/js/family/reactivatefamily.js"></script>
+}

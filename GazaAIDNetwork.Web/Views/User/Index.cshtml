@@ -1,0 +1,149 @@
+﻿@model IEnumerable<GazaAIDNetwork.Infrastructure.ViewModels.UserViewModel>
+@using GazaAIDNetwork.Core.Dtos
+@using GazaAIDNetwork.EF.Models
+@using static GazaAIDNetwork.Core.Enums.Enums
+
+@{
+    var userDtoTemp = new UserDto();
+}
+<div style="margin-top:3%" class="container-fluid">
+    <div class="menu-toggle-btn mr-15">
+        <button style="padding:15px ; margin-bottom:1%" class="main-btn success-btn-outline rounded-full btn-hover" data-bs-toggle="modal" data-bs-target="#AddUserModal">
+            <i class="bi bi-person-plus"></i> إضافة مستخدم جديد
+        </button>
+        <partial name="AddUser.cshtml" model="userDtoTemp" />
+        <partial name="EditUser.cshtml" model="userDtoTemp" />
+        
+    </div>
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+        <div class="col-lg-12">
+            <div class="card-style mb-30">
+                <h6 class="mb-10"> بيانات العاملين في لجنة الإغاثة</h6>
+                <p class="text-sm mb-20">
+                    تشمل بيانات جميع العاملين النشطين والمتوقفين وتاريخ الإضافة مع إمكانية الحذف والتفعيل
+                </p>
+                <div class="table-wrapper table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="check-input-primary">
+                                        <input class="form-check-input" type="checkbox" id="checkbox-1" />
+                                    </div>
+                                </th>
+                                <th>
+                                    <h6>الاسم</h6>
+                                </th>
+                                <th>
+                                    <h6>رقم الهوية</h6>
+                                </th>
+                                <th>
+                                    <h6>رقم الهاتف</h6>
+                                </th>
+                                <th>
+                                    <h6>اسم الشعبة</h6>
+                                </th>
+                                <th>
+                                    <h6>الصلاحية</h6>
+                                </th>
+                                <th>
+                                    <h6>تاريخ الإضافة</h6>
+                                </th>
+                                <th>
+                                    <h6>الحالة</h6>
+                                </th>
+                                <th>
+                                    <h6>الإجراءات</h6>
+                                </th>
+                            </tr>
+                            <!-- end table row-->
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model) {
+                                <tr>
+                                    <td>
+                                        <div class="check-input-primary">
+                                            <input class="form-check-input" type="checkbox" id="checkbox-1" />
+                                        </div>
+                                    </td>
+                                    <td class="min-width">
+                                        <p>@user.FullName</p>
+                                    </td>
+                                    <td class="min-width">
+                                        <p>@user.IdNumber</p>
+                                    </td>
+                                    <td class="min-width">
+                                        <p>@user.PhoneNumber</p>
+                                    </td>
+                                    <td class="min-width">
+                                        <p>@user.DivisionName</p>
+                                    </td>
+                                    <td class="min-width">
+                                        @foreach (var role in user.Roles)
+                                        {
+                                            <p>@role</p>
+                                        }
+                                    </td>
+                                    <td class="min-width">
+                                        <p>@user.CreatedDate</p>
+                                    </td>
+                                    <td class="min-width">
+                                        @if(!user.IsDelete){
+                                            <span style="padding:5px" class="main-btn success-btn-light rounded-full btn-hover">فعال</span>
+                                        }
+                                        else{
+                                            <span style="padding:5px" class="main-btn danger-btn-light rounded-full btn-hover">محظور</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!user.IsDelete)
+                                        {
+                                            <div style="display: inline-block;" class="action ">
+                                                <button onclick="DeleteUser('@user.Id')"  class="text-danger">
+                                                    <i class="lni lni-trash-can"></i>
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div style="display: inline-block;" class="action">
+                                                <button onclick="ReactivateUser('@user.Id')" class="text-success">
+                                                    <i class="lni lni-reload"></i> 
+                                                </button>
+                                            </div>
+                                        }
+                                        <div style="display: inline-block;" class="action">
+                                                <button onclick="EditUser('@user.Id')" class="text-primary" data-bs-toggle="modal" data-bs-target="#EditUserModal">
+                                                <i class="lni lni-pencil-alt"></i>
+                                            </button>
+                                        </div>
+                                        <div style="display: inline-block;" class="action">
+                                                <button onclick="ResetPasswordUser('@user.Id')" class="text-danger" >
+                                                <i class="lni lni-spinner-arrow"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            <!-- end table row -->
+                        </tbody>
+                    </table>
+                    <!-- end table -->
+                </div>
+            </div>
+            <!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    </div>
+</div>
+<!-- end row -->
+@section Scripts{
+    <script src="~/js/user/adduser.js"></script>
+    <script src="~/js/user/deleteuser.js"></script>
+    <script src="~/js/user/edituser.js"></script>
+    <script src="~/js/user/reactivateuser.js"></script>
+    <script src="~/js/user/resetpassworduser.js"></script>
+}

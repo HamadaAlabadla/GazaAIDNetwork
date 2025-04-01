@@ -1,0 +1,111 @@
+﻿@model IEnumerable<GazaAIDNetwork.Infrastructure.ViewModels.CycleAidViewModel>
+@using GazaAIDNetwork.EF.Models
+@using static GazaAIDNetwork.Core.Enums.Enums
+@{
+    var cycleAidTemp = new CycleAid();
+}
+<div style="margin-top:3%" class="container-fluid">
+    <div class="menu-toggle-btn mr-15">
+        <button style="padding:15px ; margin-bottom:1%" class="main-btn success-btn-outline rounded-full btn-hover" data-bs-toggle="modal" data-bs-target="#AddCycleAidModal">
+            <i class="bi bi-person-plus"></i> بدء دورة توزيع جديدة
+        </button>
+        <partial name="AddCycleAid.cshtml" model="cycleAidTemp" />
+
+
+    </div>
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10"> دورات التوزيع</h6>
+                    <p class="text-sm mb-20">
+                        تشمل بيانات جميع دورات التوزيع السابقة والحالية
+                    </p>
+                    <div class="table-wrapper table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="check-input-primary">
+                                            <input class="form-check-input" type="checkbox" id="checkbox-1" />
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <h6>اسم الدورة</h6>
+                                    </th>
+                                    <th>
+                                        <h6>اسم المنطقة</h6>
+                                    </th>
+                                    <th>
+                                        <h6>تاريخ البدء</h6>
+                                    </th>
+                                    <th>
+                                        <h6>تاريخ الانتهاء</h6>
+                                    </th>
+                                    <th>
+                                        <h6>عدد المستفيدين</h6>
+                                    </th>
+                                    <th>
+                                        <h6>الحالة</h6>
+                                    </th>
+                                    <th>
+                                        <h6>الإجراءات</h6>
+                                    </th>
+                                </tr>
+                                <!-- end table row-->
+                            </thead>
+                            <tbody>
+                                @foreach (var cycle in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="check-input-primary">
+                                                <input class="form-check-input" type="checkbox" id="checkbox-1" />
+                                            </div>
+                                        </td>
+                                        <td class="min-width">
+                                            <p><a asp-action="Index" asp-controller="ProjectAid" asp-route-cycleId="@cycle.Id">@cycle.Name </a></p>
+                                        </td>
+                                        <td class="min-width">
+                                            <p>@cycle.DivisionName</p>
+                                        </td>
+                                        <td class="min-width">
+                                            <p>@cycle.StartDate</p>
+                                        </td>
+                                        <td class="min-width">
+                                            <p>@cycle.EndDate</p>
+                                        </td>
+                                        <td class="min-width">
+                                            <p>@cycle.NumberOfBeneficiaries / @cycle.NumberOfFamilies</p>
+                                        </td>
+                                        <td class="min-width">
+                                            <p>@cycle.CycleAidStatus</p>
+                                        </td>
+                                        <td>
+                                            <div style="display: inline-block;" class="action ">
+                                                <button onclick="DeleteCycleAid('@cycle.Id')" class="text-danger">
+                                                    <i class="lni lni-trash-can"></i>
+                                                </button>
+                                            </div>
+                                          
+                                        </td>
+                                    </tr>
+                                }
+                                <!-- end table row -->
+                            </tbody>
+                        </table>
+                        <!-- end table -->
+                    </div>
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+    </div>
+</div>
+<!-- end row -->
+@section Scripts {
+    <script src="~/js/cycleaid/addcycleaid.js"></script>
+    <script src="~/js/cycleaid/deletecycleaid.js"></script>
+}

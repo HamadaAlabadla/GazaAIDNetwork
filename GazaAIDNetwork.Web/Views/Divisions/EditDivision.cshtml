@@ -1,0 +1,25 @@
+﻿@model GazaAIDNetwork.EF.Models.Division
+<div class="modal fade" id="EditDivisionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="fw-bold">تعديل المنطقة</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="EditDivisionForm">
+                    <input type="hidden" id="DivisionId">
+                    <input type="hidden" id="IsDelete">
+                    <div class="mb-3">
+                        <label class="form-label">اسم المنطقة</label>
+                        <input type="text" id="Name" class="form-control">
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

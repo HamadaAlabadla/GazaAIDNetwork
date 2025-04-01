@@ -1,0 +1,120 @@
+﻿@using GazaAIDNetwork.Core.Enums
+@using GazaAIDNetwork.EF.Models
+@using static GazaAIDNetwork.Core.Enums.Enums
+@model IEnumerable<GazaAIDNetwork.Infrastructure.ViewModels.DivisionViewModel>
+@{
+    var divisionTemp = new Division();
+}
+<div style="margin-top:3% ; padding:0px" class="container-fluid">
+    <div class="menu-toggle-btn mr-15">
+        <button style="padding:15px ; margin-bottom:1%" class="main-btn success-btn-outline rounded-full btn-hover" data-bs-toggle="modal" data-bs-target="#AddDivisionModal">
+            <i class="bi bi-plus-circle"></i> إضافة منطقة جديدة
+        </button>
+        <partial name="AddDivision.cshtml" model="divisionTemp" />
+        <partial name="EditDivision.cshtml" model="divisionTemp" />
+    </div>
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10">بيانات الشعب</h6>
+                    <p class="text-sm mb-20">
+                        تشمل جميع المناطق الفعالة والمعطلة وتاريخ الإنشاء مع إمكانية الحذف والتفعيل
+                    </p>
+                    <div  class="table-wrapper table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="check-input-primary">
+                                            <input class="form-check-input" type="checkbox" id="checkbox-1" />
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <h6>اسم المنطقة</h6>
+                                    </th>
+                                    <th>
+                                        <h6>عدد العاملين</h6>
+                                    </th>
+                                    <th>
+                                        <h6>تاريخ الإضافة</h6>
+                                    </th>
+                                    <th>
+                                        <h6>الحالة</h6>
+                                    </th>
+                                    <th>
+                                        <h6>الإجراءات</h6>
+                                    </th>
+                                </tr>
+                                <!-- end table row-->
+                            </thead>
+                            <tbody>
+                                @foreach (var division in Model) {
+                                    <tr>
+                                        <td>
+                                            <div class="check-input-primary">
+                                                <input class="form-check-input" type="checkbox" id="checkbox-1" />
+                                            </div>
+                                        </td>
+                                        <td class="min-width">
+                                            <p>@division.Name</p>
+                                        </td>
+                                        <td class="min-width">
+                                            <p>@division.Users.Count()</p>
+                                        </td>
+                                        <td class="min-width">
+                                                <p>@division.AuditLogs.LastOrDefault(x => x.Name.Equals(EnumHelper.GetDisplayName( AuditName.Create)))!.DateCreate</p>
+                                        </td>
+                                        <td class="min-width">
+                                            @if(!division.IsDeleted){
+                                                <span style="padding:5px" class="main-btn success-btn-light rounded-full btn-hover">فعالة</span>
+                                            }
+                                            else{
+                                                <span style="padding:5px" class="main-btn danger-btn-light rounded-full btn-hover">معطلة</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!division.IsDeleted)
+                                            {
+                                                <div style="display: inline-block;" class="action ">
+                                                    <button onclick="DeleteDivision('@division.Id')"  class="text-danger">
+                                                        <i class="lni lni-trash-can"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div style="display: inline-block;" class="action">
+                                                    <button onclick="ReactivateDivision('@division.Id')" class="text-success">
+                                                        <i class="lni lni-reload"></i> 
+                                                    </button>
+                                                </div>
+                                            }
+                                            <div style="display: inline-block;" class="action">
+                                                <button onclick="EditDivision('@division.Id')" class="text-primary" data-bs-toggle="modal" data-bs-target="#EditDivisionModal">
+                                                    <i class="lni lni-pencil-alt"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                <!-- end table row -->
+                            </tbody>
+                        </table>
+                        <!-- end table -->
+                    </div>
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+    </div>
+</div>
+<!-- end row -->
+@section Scripts{
+    <script src="~/js/division/adddivision.js"></script>
+    <script src="~/js/division/deletedivision.js"></script>
+    <script src="~/js/division/reactivatedivision.js"></script>
+    <script src="~/js/division/editdivision.js"></script>
+}
